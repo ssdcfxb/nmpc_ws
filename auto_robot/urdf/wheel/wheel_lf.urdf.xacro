@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find auto_robot)/urdf/wheel/wheel.transmission.xacro"/>
+  <xacro:include filename="$(find auto_robot)/urdf/wheel/wheel.gazebo.xacro"/>
+  
+  <xacro:macro name="wheel_lf_v0" params="prefix parent *joint_origin *joint_axis">
+	<joint name="${prefix}_wheel_joint" type="continuous">
+	  <xacro:insert_block name="joint_origin"/>
+	  <parent link="${parent}"/>
+	  <child link="${prefix}_wheel_link"/>
+         <limit effort="100" velocity="20"/>
+	  <xacro:insert_block name="joint_axis"/>
+	</joint>
+
+	<link name="${prefix}_wheel_link">
+	<inertial>
+      <origin
+        xyz="-0.0013062 -0.014419 3.2463E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.21481" />
+      <inertia
+        ixx="0.00010361"
+        ixy="4.5758E-08"
+        ixz="-3.0352E-07"
+        iyy="0.00018482"
+        iyz="1.2751E-07"
+        izz="0.00010389" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auto_robot/meshes/fl_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://auto_robot/meshes/fl_wheel_link.STL" />
+      </geometry>
+    </collision>
+	</link>
+  </xacro:macro>
+  
+</robot>
+

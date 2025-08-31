@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<robot>
+
+    <!-- <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/z1_gazebo</robotNamespace>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        </plugin>
+    </gazebo> -->
+    <!-- ROS2 + Ignition Gazebo 控制插件 -->
+    <gazebo>
+        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+            <parameters>$(find z1_description)/config/z1_controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+    <gazebo reference="link04">
+        <self_collide>true</self_collide>
+    </gazebo>
+
+    <gazebo reference="link05">
+        <self_collide>true</self_collide>
+    </gazebo>
+
+    <gazebo reference="link06">
+        <self_collide>true</self_collide>
+    </gazebo>
+</robot>

@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<robot name="auto_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:arg name="controllers" default="$(find auto_robot)/config/chassis_controllers.yaml" />
+
+  <xacro:property name="M_PI" value="3.14159274"/>
+
+  <xacro:include filename="$(find auto_robot)/urdf/base/base.urdf.xacro"/>
+    
+  <xacro:include filename="$(find auto_robot)/urdf/wheel/wheel_rr.urdf.xacro"/>
+  <xacro:include filename="$(find auto_robot)/urdf/wheel/wheel_rf.urdf.xacro"/>
+  <xacro:include filename="$(find auto_robot)/urdf/wheel/wheel_lf.urdf.xacro"/>
+  <xacro:include filename="$(find auto_robot)/urdf/wheel/wheel_lr.urdf.xacro"/> 
+  
+  <xacro:include filename="$(find auto_robot)/urdf/sensor/imu/imu.urdf.xacro"/>
+  <xacro:include filename="$(find auto_robot)/urdf/sensor/lidar/lidar.urdf.xacro"/>
+  <xacro:include filename="$(find auto_robot)/urdf/sensor/camera/camera.urdf.xacro"/>
+  
+  <xacro:include filename="$(find z1_description)/urdf/z1.urdf.xacro"/>
+  <xacro:include filename="$(find z1_description)/urdf/z1.ros2_control.xacro"/>
+
+
+  <!-- =============== Link & Joint =============== -->
+  <!-- Base -->
+  <link name="base_footprint"/>
+  <xacro:base_v0 parent="base_footprint">
+	<origin xyz="0 0 0"/>
+  </xacro:base_v0>
+  
+  <!-- Lidar -->
+  <xacro:rplidar prefix="lidar" parent = "base_link">
+  	<origin xyz="-0.22 0.0022859 0.71" rpy="0 0.2 0" />
+  </xacro:rplidar>
+  
+  <!-- IMU -->
+  <xacro:imu_v0 prefix="imu" parent="base_link">
+	<origin xyz="0 0 0.013" rpy="0 0 0"  />
+  </xacro:imu_v0>
+
+  <!-- CAMERA -->
+ <xacro:camera_v0 prefix="camera" parent="base_link">
+  <origin xyz="-0.17 0.0033941 0.6558" rpy="0 0 0" />
+ </xacro:camera_v0>
+ 
+   <xacro:z1 prefix="z1" parent="base_link"> 
+      <origin xyz="0.21 0 0.182" rpy="0 0 0" />
+  </xacro:z1>
+
+  <!-- Z1 End Effector Camera -->
+  <xacro:camera_v0 prefix="z1_camera" parent="link06">
+    <origin xyz="0.08 0 0.05" rpy="0 0 0" />
+  </xacro:camera_v0>  
+  
+  <!-- <xacro:mid360 prefix="livox" parent="base_link" topic="mid360">
+    <origin xyz="0 0 0.3" rpy="0 0 0"/>
+  </xacro:mid360> -->
+  
+  <!-- Suspension -->
+  <!-- YAW -->
+  <!-- <xacro:steering_yaw prefix="yaw" parent="base_link"> -->
+	<!-- <origin xyz="0 0 0.064" rpy="0 0 0" />
+	<axis xyz="0 0 -1" />
+  </xacro:steering_yaw> -->
+  <!-- PITCH -->
+  <!-- <xacro:steering_pitch prefix="pitch" parent="yaw_steering_link">
+	<origin xyz="0 -0.00054389 0.16565"  rpy="0 0 0" />
+	<axis xyz="0 1 0" />
+  </xacro:steering_pitch> -->
+
+
+  <!-- Wheel -->
+  <!-- Front Right Wheel -->
+  <xacro:wheel_rr_v0 prefix="rr" parent="base_link">
+	<origin  xyz="-0.1915 -0.22264 0.036" rpy="0 0 0" />
+	 <axis xyz="0 -1 0" />
+  </xacro:wheel_rr_v0>
+  <!--  Front Left Wheel -->
+  <xacro:wheel_lr_v0 prefix="rl" parent="base_link">
+	<origin xyz="-0.1915 0.22464 0.036" rpy="0 0 0" />
+	<axis xyz="0 1 0" />
+  </xacro:wheel_lr_v0>
+  <!-- Rear Right Wheel -->
+  <xacro:wheel_rf_v0 prefix="fr" parent="base_link">
+	<origin xyz="0.19151 -0.22065 0.036001" rpy="0 0 0" />
+	<axis xyz="0 1 0"/>
+  </xacro:wheel_rf_v0>
+  <!--  Rear Left Wheel -->
+  <xacro:wheel_lf_v0 prefix="fl" parent="base_link">
+	<origin xyz="0.1915 0.22265 0.03599" rpy="0 0 0"/>
+	<axis xyz="0 1 0"/>
+  </xacro:wheel_lf_v0>
+
+  <!-- ===============  Wheel Transmission =============== -->
+  <xacro:wheel_trans_v0 prefix="fr"/>
+  <xacro:wheel_trans_v0 prefix="fl"/>
+  <xacro:wheel_trans_v0 prefix="rr"/>
+  <xacro:wheel_trans_v0 prefix="rl"/>
+  <!-- ===============  Steering Transmission =============== -->
+  <!-- <xacro:steering_trans_v0 prefix="yaw"/>
+  <xacro:steering_trans_v0 prefix="pitch"/> -->
+  <!-- ===============  Gazebo Plugins  =============== -->
+  <!-- Drive Plugin -->
+  <gazebo>
+    <plugin filename="ignition-gazebo6-mecanum-drive-system" name="ignition::gazebo::systems::MecanumDrive">
+      <front_left_joint>fl_wheel_joint</front_left_joint>
+      <front_right_joint>fr_wheel_joint</front_right_joint>
+      <back_left_joint>rl_wheel_joint</back_left_joint>
+      <back_right_joint>rr_wheel_joint</back_right_joint>
+      
+      <wheel_separation>0.447</wheel_separation>  <!-- 左右轮距 -->
+      <wheelbase>0.383</wheelbase>                <!-- 前后轮距 -->
+      <wheel_radius>0.065</wheel_radius>          <!-- 轮子半径 -->
+      
+      <topic>cmd_vel</topic>
+      <odom_topic>odom</odom_topic>
+      <tf_topic>tf</tf_topic>
+    
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_footprint</child_frame_id>
+      
+      <odom_publish_frequency>50</odom_publish_frequency>
+    </plugin>
+  </gazebo>
+
+  <!-- ROS2 Control Plugin -->
+  <gazebo>
+    <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+      <parameters>$(arg controllers)</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+      <controller_manager_name>controller_manager</controller_manager_name>
+    </plugin>
+  </gazebo>
+
+  <!-- ros2_control Hardware Interface -->
+  <ros2_control name="chassis_control" type="system">
+    <hardware>
+      <plugin>ign_ros2_control/IgnitionSystem</plugin>
+    </hardware>
+    
+    <joint name="fl_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="fr_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="rl_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="rr_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- Base -->
+  <xacro:base_gazebo_v0/>
+
+  <!-- IMU -->
+  <xacro:imu_gazebo_v0 prefix = "imu"/>
+  
+  <!-- LIDAR -->
+  <xacro:lidar_gazebo_v0 prefix ="lidar"/>
+  
+  <!-- CAMERA -->
+   <xacro:camera_gazebo_v0 prefix ="camera"/>
+   
+  <!-- Z1 End Effector Camera -->
+   <xacro:camera_gazebo_v0 prefix ="z1_camera"/>
+   
+
+  <!-- Wheel -->
+  <xacro:wheel_gazebo_v0 prefix="fr"/>
+  <xacro:wheel_gazebo_v0 prefix="fl"/>
+  <xacro:wheel_gazebo_v0 prefix="rr"/>
+  <xacro:wheel_gazebo_v0 prefix="rl"/>
+  
+
+  <!-- Gombal -->
+  <!-- <xacro:steering_gazebo_v0 prefix="yaw"/>
+  <xacro:steering_gazebo_v0 prefix="pitch"/> -->
+
+
+</robot>
