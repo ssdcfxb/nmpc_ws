@@ -112,9 +112,9 @@
       <wheelbase>0.383</wheelbase>                <!-- 前后轮距 -->
       <wheel_radius>0.065</wheel_radius>          <!-- 轮子半径 -->
       
-      <topic>cmd_vel</topic>
-      <odom_topic>odom</odom_topic>
-      <tf_topic>tf</tf_topic>
+      <topic>/cmd_vel</topic>
+      <odom_topic>/odom</odom_topic>
+      <tf_topic>/tf</tf_topic>
     
       <frame_id>odom</frame_id>
       <child_frame_id>base_footprint</child_frame_id>
@@ -124,7 +124,7 @@
   </gazebo>
 
   <!-- ros2_control Hardware Interface -->
-  <ros2_control name="chassis_control" type="system">
+  <!-- <ros2_control name="chassis_control" type="system">
     <hardware>
       <plugin>ign_ros2_control/IgnitionSystem</plugin>
     </hardware>
@@ -164,7 +164,7 @@
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
-  </ros2_control>
+  </ros2_control> -->
 
   <!-- Base -->
   <xacro:base_gazebo_v0/>
@@ -196,7 +196,7 @@
   <!-- ROS2 Control Plugin -->
   <gazebo>
     <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-      <parameters>$(arg chassis_controllers)</parameters>
+      <!-- <parameters>$(arg chassis_controllers)</parameters> -->
       <parameters>$(arg z1_controllers)</parameters>
       <robot_param>robot_description</robot_param>
       <robot_param_node>robot_state_publisher</robot_param_node>
