@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <robot name="auto_robot" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:arg name="controllers" default="$(find auto_robot)/config/chassis_controllers.yaml" />
+  <xacro:arg name="chassis_controllers" default="$(find auto_robot)/config/chassis_controllers.yaml" />
+  <xacro:arg name="z1_controllers" default="$(find auto_robot)/config/z1_controllers.yaml" />
 
   <xacro:property name="M_PI" value="3.14159274"/>
 
@@ -122,16 +123,6 @@
     </plugin>
   </gazebo>
 
-  <!-- ROS2 Control Plugin -->
-  <gazebo>
-    <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-      <parameters>$(arg controllers)</parameters>
-      <robot_param>robot_description</robot_param>
-      <robot_param_node>robot_state_publisher</robot_param_node>
-      <controller_manager_name>controller_manager</controller_manager_name>
-    </plugin>
-  </gazebo>
-
   <!-- ros2_control Hardware Interface -->
   <ros2_control name="chassis_control" type="system">
     <hardware>
@@ -201,6 +192,17 @@
   <!-- Gombal -->
   <!-- <xacro:steering_gazebo_v0 prefix="yaw"/>
   <xacro:steering_gazebo_v0 prefix="pitch"/> -->
+
+  <!-- ROS2 Control Plugin -->
+  <gazebo>
+    <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+      <parameters>$(arg chassis_controllers)</parameters>
+      <parameters>$(arg z1_controllers)</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+      <controller_manager_name>controller_manager</controller_manager_name>
+    </plugin>
+  </gazebo>
 
 
 </robot>

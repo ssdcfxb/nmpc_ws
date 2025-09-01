@@ -12,6 +12,8 @@
   <depend>robot_state_publisher</depend>
   <depend>joint_state_publisher</depend>
   <depend>joint_state_publisher_gui</depend>
+  <depend>joint_state_broadcaster</depend>
+  <depend>position_controller</depend>
   <depend>rviz2</depend>
   <depend>xacro</depend>
   <depend>urdf</depend>

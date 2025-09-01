@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100  # 控制器更新频率
+    update_rate: 1000  # 控制器更新频率
     
     # 控制器列表
     joint_state_broadcaster:
