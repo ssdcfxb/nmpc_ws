@@ -17,8 +17,8 @@
   <xacro:include filename="$(find auto_robot)/urdf/sensor/lidar/lidar.urdf.xacro"/>
   <xacro:include filename="$(find auto_robot)/urdf/sensor/camera/camera.urdf.xacro"/>
   
-  <xacro:include filename="$(find z1_description)/urdf/z1.urdf.xacro"/>
-  <xacro:include filename="$(find z1_description)/urdf/z1.ros2_control.xacro"/>
+  <!-- <xacro:include filename="$(find z1_description)/urdf/z1.urdf.xacro"/>
+  <xacro:include filename="$(find z1_description)/urdf/z1.ros2_control.xacro"/> -->
 
 
   <!-- =============== Link & Joint =============== -->
@@ -43,14 +43,14 @@
   <origin xyz="-0.17 0.0033941 0.6558" rpy="0 0 0" />
  </xacro:camera_v0>
  
-   <xacro:z1 prefix="z1" parent="base_link"> 
+   <!-- <xacro:z1 prefix="z1" parent="base_link"> 
       <origin xyz="0.21 0 0.182" rpy="0 0 0" />
-  </xacro:z1>
+  </xacro:z1> -->
 
   <!-- Z1 End Effector Camera -->
-  <xacro:camera_v0 prefix="z1_camera" parent="link06">
+  <!-- <xacro:camera_v0 prefix="z1_camera" parent="link06">
     <origin xyz="0.08 0 0.05" rpy="0 0 0" />
-  </xacro:camera_v0>  
+  </xacro:camera_v0>   -->
   
   <!-- <xacro:mid360 prefix="livox" parent="base_link" topic="mid360">
     <origin xyz="0 0 0.3" rpy="0 0 0"/>
@@ -73,7 +73,7 @@
   <!-- Front Right Wheel -->
   <xacro:wheel_rr_v0 prefix="rr" parent="base_link">
 	<origin  xyz="-0.1915 -0.22264 0.036" rpy="0 0 0" />
-	 <axis xyz="0 -1 0" />
+	 <axis xyz="0 1 0" />
   </xacro:wheel_rr_v0>
   <!--  Front Left Wheel -->
   <xacro:wheel_lr_v0 prefix="rl" parent="base_link">
@@ -92,17 +92,17 @@
   </xacro:wheel_lf_v0>
 
   <!-- ===============  Wheel Transmission =============== -->
-  <xacro:wheel_trans_v0 prefix="fr"/>
-  <xacro:wheel_trans_v0 prefix="fl"/>
   <xacro:wheel_trans_v0 prefix="rr"/>
   <xacro:wheel_trans_v0 prefix="rl"/>
+  <xacro:wheel_trans_v0 prefix="fr"/>
+  <xacro:wheel_trans_v0 prefix="fl"/>
   <!-- ===============  Steering Transmission =============== -->
   <!-- <xacro:steering_trans_v0 prefix="yaw"/>
   <xacro:steering_trans_v0 prefix="pitch"/> -->
   <!-- ===============  Gazebo Plugins  =============== -->
   <!-- Drive Plugin -->
   <gazebo>
-    <plugin filename="ignition-gazebo6-mecanum-drive-system" name="ignition::gazebo::systems::MecanumDrive">
+    <plugin filename="libignition-gazebo6-mecanum-drive-system.so" name="ignition::gazebo::systems::MecanumDrive">
       <front_left_joint>fl_wheel_joint</front_left_joint>
       <front_right_joint>fr_wheel_joint</front_right_joint>
       <back_left_joint>rl_wheel_joint</back_left_joint>
@@ -112,14 +112,20 @@
       <wheelbase>0.383</wheelbase>                <!-- 前后轮距 -->
       <wheel_radius>0.065</wheel_radius>          <!-- 轮子半径 -->
       
-      <topic>/cmd_vel</topic>
+      <!-- <topic>/cmd_vel</topic>
       <odom_topic>/odom</odom_topic>
-      <tf_topic>/tf</tf_topic>
+      <tf_topic>/tf</tf_topic> -->
     
       <frame_id>odom</frame_id>
       <child_frame_id>base_footprint</child_frame_id>
       
       <odom_publish_frequency>50</odom_publish_frequency>
+
+      <!-- <ros>
+        <namespace></namespace>
+        <remapping>/cmd_vel:=/cmd_vel</remapping>
+        <remapping>/odom:=/odom</remapping>
+      </ros> -->
     </plugin>
   </gazebo>
 
@@ -179,7 +185,7 @@
    <xacro:camera_gazebo_v0 prefix ="camera"/>
    
   <!-- Z1 End Effector Camera -->
-   <xacro:camera_gazebo_v0 prefix ="z1_camera"/>
+   <!-- <xacro:camera_gazebo_v0 prefix ="z1_camera"/> -->
    
 
   <!-- Wheel -->
@@ -194,15 +200,15 @@
   <xacro:steering_gazebo_v0 prefix="pitch"/> -->
 
   <!-- ROS2 Control Plugin -->
-  <gazebo>
-    <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-      <!-- <parameters>$(arg chassis_controllers)</parameters> -->
+  <!-- <gazebo>
+    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(arg chassis_controllers)</parameters>
       <parameters>$(arg z1_controllers)</parameters>
       <robot_param>robot_description</robot_param>
       <robot_param_node>robot_state_publisher</robot_param_node>
       <controller_manager_name>controller_manager</controller_manager_name>
     </plugin>
-  </gazebo>
+  </gazebo> -->
 
 
 </robot>

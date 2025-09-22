@@ -14,6 +14,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -58,7 +59,12 @@ def generate_launch_description():
 
     package_name='auto_robot' #<--- CHANGE ME
     urdf_tutorial_path = get_package_share_path('auto_robot')
+    pkg_path = os.path.join(get_package_share_directory('auto_robot'))
+    xacro_file = os.path.join(pkg_path,'robots','auto_robot.xacro')
     default_rviz_config_path = urdf_tutorial_path / 'rviz/urdf.rviz'
+    robot_description_content = Command([
+        'xacro ', xacro_file
+    ])
 
     # Pose where we want to spawn the robot
     spawn_x_val = '0.0'
@@ -66,10 +72,14 @@ def generate_launch_description():
     spawn_z_val = '0.5'
     spawn_yaw_val = '0.0'
 
-    auto_robot = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','auto_robot.launch.py'
-                )]), launch_arguments={'use_sim_time': 'true'}.items()
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': ParameterValue(robot_description_content, value_type=str),
+            'use_sim_time': True
+        }]
     )
 
     # Include the Gazebo launch file, provided by the gazebo_ros package
@@ -138,7 +148,8 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[
             os.path.join(get_package_share_directory(package_name), "config", "chassis_controllers.yaml"),
-            os.path.join(get_package_share_directory(package_name), "config", "z1_controllers.yaml")
+            # os.path.join(get_package_share_directory(package_name), "config", "z1_controllers.yaml"),
+            {"robot_description": ParameterValue(robot_description_content, value_type=str)},
         ],
         output="screen",
     )
@@ -161,12 +172,13 @@ def generate_launch_description():
     # Launch them all!
     return LaunchDescription([
         rviz_arg,
-        auto_robot,
+        robot_state_publisher,
+        # controller_manager,
         ignition_gazebo_node,  # 先启动 Gazebo
         spawn_entity,          # 然后生成机器人
-        joint_state_broadcaster_spawner,
-        z1_position_controller_spawner,
+        # joint_state_broadcaster_spawner,
+        # z1_position_controller_spawner,
         # joint_state_publisher_gui_node,  # 简单的关节状态发布器
         # rviz_node,             # 直接启动 RViz，不用延迟
-        rviz_delayed,
+        # rviz_delayed,
     ])

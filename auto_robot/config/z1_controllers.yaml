@@ -21,6 +21,14 @@ position_controller:
       - joint4
       - joint5
       - joint6
+    interface_name: position
+    gains:
+      joint1: {p: 1000.0, i: 0.01, d: 10.0}
+      joint2: {p: 1000.0, i: 0.01, d: 10.0}
+      joint3: {p: 800.0,  i: 0.01, d: 8.0}
+      joint4: {p: 500.0,  i: 0.01, d: 5.0}
+      joint5: {p: 500.0,  i: 0.01, d: 5.0}
+      joint6: {p: 300.0,  i: 0.01, d: 3.0}
 
 torque_controller:
   ros__parameters:
@@ -31,3 +39,4 @@ torque_controller:
       - joint4
       - joint5
       - joint6
+    interface_name: effort

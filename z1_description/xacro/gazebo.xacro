@@ -9,7 +9,7 @@
     </gazebo> -->
     <!-- ROS2 + Ignition Gazebo 控制插件 -->
     <gazebo>
-        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
             <parameters>$(find z1_description)/config/z1_controllers.yaml</parameters>
         </plugin>
     </gazebo>
